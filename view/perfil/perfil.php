@@ -14,6 +14,11 @@ if (!$usuario) {
     exit;
 }
 
+
+$msgSucesso = "";
+if (isset($_GET['msg']) && $_GET['msg'] === '1') {
+    $msgSucesso = "Foto de perfil atualizada com sucesso";
+}
 $msgErro = "";
 //Verificar se o usuário clicou no gravar 
 if (isset($_FILES['foto'])) {
@@ -21,9 +26,11 @@ if (isset($_FILES['foto'])) {
     $foto = $_FILES['foto'];
 
     $perfCont = new PerfilController();
-    $erros = $perfCont->atualizar($foto);
+    $erros = $perfCont->atualizar($usuario, $foto);
     if($erros) {
         $msgErro = implode("<br>", $erros);
+    }else{
+        header("Location: " . URL_BASE . "/view/perfil/perfil.php");
     }
 }
 
@@ -60,12 +67,20 @@ include_once(__DIR__ . "/../include/menu.php");
         <?php endif; ?>
     </div>
 
+            <div class="col-6 mb-2">
+                <?php if($msgSucesso): ?>
+                    <div class="alert alert-success">
+                        <?= $msgSucesso ?>
+                    </div>
+                <?php endif; ?>
+            </div>
+
 </div>
 
 <div class="row mt-5">
 
     <div class="col-6">
-        <form method="POST" action="" enctype="multipart/form-data">
+        <form method="POST" action="perfil.php" enctype="multipart/form-data">
            
         <div>
             <label for="foto" class="form-label">Foto de Perfil:</label>  
